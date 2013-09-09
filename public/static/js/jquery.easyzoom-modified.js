@@ -24,7 +24,7 @@
 					preview: "#preview-zoom",
 					window: "#window-zoom"					
 				}
-		}
+		};
 		
 		/**
 		 * Define notifications
@@ -32,7 +32,7 @@
 		this.notifications = {
 				loading: "Loading high resolution image...",
 				error: "There has been a problem with loading the image!"
-		}
+		};
 		
 		/**
 		 * Extend the default settings
@@ -57,7 +57,7 @@
 					isLoaded: false,					
 					reference: null					
 				}				
-		}
+		};
 
 		/**
 		 * Initialize the jQuery plugin
@@ -67,7 +67,7 @@
 		this.init = function(referenceOfImage) {			
 			global.resource.reference = (typeof referenceOfImage != "undefined") ? referenceOfImage : $(target).attr("data-image");
 			$this.reset().attachEventListener();
-		}
+		};
 		
 		/**
 		 * Attach serveral eventlistener to the given target
@@ -84,7 +84,7 @@
 				}
 			});					
 			return $this;
-		}
+		};
 		
 		/**
 		 * Detach serveral event listener otherwise events will be called multiple times
@@ -94,7 +94,7 @@
 		this.detachEventListener = function() {
 			$(target).off();
 			return $this;
-		}
+		};
 		
 		/**
 		 * Start the jQuery plugin
@@ -116,7 +116,7 @@
 				 */
 				$this.showZoomWindow();
 			}
-		}
+		};
 		
 		/**
 		 * Reset the jQuery plugin
@@ -137,7 +137,7 @@
 			$($this.settings.selector.window).fadeOut();	
 			$($this.settings.selector.preview).fadeOut();
 			return $this;
-		}
+		};
 		
 		/**
 		 * Defer fadeout by the given time in milliseconds
@@ -149,7 +149,7 @@
 			setTimeout(function() {
 				$this.fadeOut();
 			}, time);			
-		}
+		};
 		
 		/**
 		 * Wait until the resource is loaded
@@ -175,7 +175,7 @@
 			);		
 			
 			return $this;
-		}
+		};
 		
 		/**
 		 * Show the zoom window
@@ -184,7 +184,7 @@
 		 */
 		this.showZoomWindow = function() {
             $($this.settings.selector.window).html(global.resource.image).fadeIn();	            
-		}
+		};
 		
 		/**
 		 * Show the preview of the magnified area
@@ -193,7 +193,7 @@
 		 */
 		this.showPreview = function(positionProperties) {				
 			$($this.settings.selector.preview).css(positionProperties).fadeIn();				
-		}
+		};
 		
 		/**
 		 * Calculate relations of image geometry
@@ -207,7 +207,7 @@
 			
 			global.image.properties.relation.height =
 				imageHighResolution.height / global.image.lowResolution.height();		
-		}
+		};
 		
 		/**
 		 * Recognize mouse movement, animate image inside the zoom window
@@ -237,7 +237,7 @@
 					$this.fadeOut();
 				}					
 			}			
-		}
+		};
 		
 		/**
 		 * Retrieve a list of position properties used to adjust the preview
@@ -258,7 +258,7 @@
 				left: event.pageX - (positionProperties.width / 2) - offsetParent.left,
 				top: event.pageY - (positionProperties.height / 2) - offsetParent.top
 				});
-		}		
+		};	
 		
 		/**
 		 * Review wether the preview remains in a valid scope
@@ -284,7 +284,7 @@
 			}
 			
 			return true;
-		}
+		};
 
 		/**
 		 * Shows the given notification in the zoom window
@@ -294,7 +294,7 @@
 		this.showNotification = function(notification) {
 			$($this.settings.selector.window).fadeIn().text(notification);
 			return $this;
-		}
+		};
 		
 		/**
 		 * Shows an error notification, after two seconds the zoom window
@@ -304,7 +304,7 @@
 		 */
 		this.showErrorNotification = function() {			
 			$this.modifyCursorAppearance("auto").showNotification($this.notifications.error).deferredFadeOut(2000);	
-		}
+		};
 		
 		/**
 		 * Modify the cursor appearance when the target hover event will be
@@ -315,7 +315,7 @@
 		this.modifyCursorAppearance = function(appearance) {
 			$(target).css("cursor", appearance);
 			return $this;
-		}
+		};
 		
 		/**
 		 * Initialize the jQuery plugin at startup
@@ -333,6 +333,6 @@
 		return this.each(function(){
 			$.data(this, "easyZoom", new EasyZoom(this, settings));
 		});		
-	}
+	};
 
 })(jQuery);
