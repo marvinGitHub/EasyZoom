@@ -306,7 +306,7 @@
 		};
 		
 		/**
-		 * Modify the cursor appearance when the target hover event will be
+		 * Modify the cursor appearance when a hover event of the target will be
 		 * triggered
 		 * 
 		 * @returns EasyZoom
