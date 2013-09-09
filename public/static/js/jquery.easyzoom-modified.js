@@ -72,6 +72,7 @@
 		/**
 		 * Attach serveral eventlistener to the given target
 		 * 
+		 * @returns EasyZoom 
 		 */
 		this.attachEventListener = function() {			
 			$(target).on({
