@@ -5,7 +5,7 @@
  * @author Matt Hinchliffe
  * @author Marvin Elia Hoppe
  * @license Creative Commons Attribution-ShareAlike 3.0
- * @version 1.0.5
+ * @version 1.0.6
  */
 (function($) {	  
 	
