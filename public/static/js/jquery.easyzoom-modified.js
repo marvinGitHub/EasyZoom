@@ -72,7 +72,6 @@
 		/**
 		 * Attach serveral eventlistener to the given target
 		 * 
-		 * @returns EasyZoom
 		 */
 		this.attachEventListener = function() {			
 			$(target).on({
@@ -126,7 +125,7 @@
 		this.reset = function() {		
 			global.resource.isLoaded = false;			
 			return $this.fadeOut().detachEventListener();
-		}
+		};
 		
 		/**
 		 * Fadeout various elements which have been made visible before
@@ -154,7 +153,7 @@
 		/**
 		 * Wait until the resource is loaded
 		 * 
-		 * @returns EasyZoom
+		 * @returns Global
 		 */
 		this.waitUntilResourceIsLoaded = function(reference) {
 		
@@ -250,7 +249,7 @@
 			var positionProperties = {
 					height: $($this.settings.selector.window).height() / global.image.properties.relation.height,
 					width: ($($this.settings.selector.window).width() / global.image.properties.relation.width)									
-			}
+			};
 			
 			var offsetParent = $(global.image.lowResolution).offsetParent().offset();
 		
@@ -300,7 +299,7 @@
 		 * Shows an error notification, after two seconds the zoom window
 		 * will be hidden
 		 * 
-		 * @returns vois
+		 * @returns void
 		 */
 		this.showErrorNotification = function() {			
 			$this.modifyCursorAppearance("auto").showNotification($this.notifications.error).deferredFadeOut(2000);	
