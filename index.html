@@ -1,0 +1,90 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<title>EasyZoom - Demo</title>
+<link rel="stylesheet" type="text/css" href="public/static/css/easyzoom.css">
+
+<script type="text/javascript" src="public/static/js/vendor/jquery-2.0.3.min.js"></script>
+<script type="text/javascript" src="public/static/js/jquery.easyzoom-modified.min.js"></script>
+
+<!-- Inline javascript used for easyzoom demo -->
+<script type="text/javascript">
+$(document).ready(function() {
+	
+	// activate the jQuery plugin
+	$("div.zoom").easyZoom({
+		selector: {
+			preview: "#preview-zoom",
+	        window: "#window-zoom"	        			
+		}		
+	});	
+});
+</script>
+
+<!-- Inline cascading stylesheet rules -->
+<style type="text/css">
+    #site-wrapper {
+        font-family: sans-serif;
+        margin:auto;
+        width:800px;
+        color:#333333;
+    }
+    
+    #demo {
+        width:400px;
+    }
+    
+    a.no-underline {
+        text-decoration:none;
+    }
+    
+    a, a:visited, a:hover, a:active {
+      color: #4C91C0;
+    }
+    
+    a:hover {
+        text-decoration:underline;       
+    }
+</style>
+
+</head>
+<body style="background-color:#EEEEEE;">
+<div id="site-wrapper">
+
+<h1>EasyZoom jQuery - <small>image zoom plugin (modified)</small></h1>
+
+<!-- HTML layout used for jQuery plugin easyzoom -->
+<div id="demo" class="zoom" data-image="public/static/img/demo.jpg">
+    <img src="public/static/img/demo-resized.jpg"> 
+    <div id="preview-zoom"></div>      
+</div>
+  
+<div id="container-zoom">      
+    <div id="window-zoom" style="display:none;"></div>        
+</div>
+
+<span><small>(Check out this demo while hovering the image above)</small></span>
+<p>EasyZoom is an basic, lightweight <a class="no-underline" href="http://www.jquery.com/" target="_blank">jQuery</a> image zoom plugin based on the previous work by Alen Grakalic and Matt Hinchliffe. This modified version of EasyZoom includes a feature to show a preview of the magnified image. The original gallery extension and mobile device support has been removed. </p>
+
+<h2>Download</h2>
+<ul>
+    <li><a class="no-underline" href="public/static/js/jquery.easyzoom-modified.js">Developement Version</a></li>
+    <li><a class="no-underline" href="public/static/js/jquery.easyzoom-modified.min.js">Minified Version</a><small> (minimal footprint, only 2.7kB)</small></li>
+</ul>
+<span><small>* licensed under the <a class="no-underline" href="http://creativecommons.org/licenses/by-sa/3.0/de/" target="_blank">Creative Commons Share A Like 3.0</a></small></span>
+
+<h2>Dependencies</h2>
+<ul>
+    <li>jQuery 1.7+</li>
+</ul>
+
+<h2>Supported browsers</h2>
+<ul>
+    <li>Internet Explorer 9</li>
+    <li>Firefox 23</li>
+</ul>
+
+</div>
+</body>
+</html>
