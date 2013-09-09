@@ -24,10 +24,10 @@
             "url": "http://creativecommons.org/licenses/by-sa/3.0/de/"
         }
     ],
-    "bugs": "https://github.com/jquery/jquery-color/issues",
-    "homepage": "https://github.com/jquery/jquery-color",
-    "docs": "https://github.com/jquery/jquery-color",
-    "download": "http://code.jquery.com/#color",
+    "bugs": "",
+    "homepage": "",
+    "docs": "",
+    "download": "https://github.com/marvinGitHub/EasyZoom",
     "dependencies": {
         "jquery": ">=1.7"
     }
