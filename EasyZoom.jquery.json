@@ -1,0 +1,34 @@
+{
+    "name": "EasyZoom",
+    "title": "EasyZoom",
+    "description": "jQuery plugin for image zoom support.",
+    "keywords": [
+        "image",
+        "zoom"
+    ],
+    "version": "1.0.4",
+    "author": {
+        "name": "Marvin Elia Hoppe",
+        "url": "https://github.com/jquery/jquery-color/blob/2.1.2/AUTHORS.txt"
+    },
+    "maintainers": [
+        {
+            "name": "Marvin Elia Hoppe",
+            "email": "marvin_elia@web.de",
+            "url": ""
+        }
+    ],
+    "licenses": [
+        {
+            "type": "Creative Commons Share A Like 3.0",
+            "url": "http://creativecommons.org/licenses/by-sa/3.0/de/"
+        }
+    ],
+    "bugs": "https://github.com/jquery/jquery-color/issues",
+    "homepage": "https://github.com/jquery/jquery-color",
+    "docs": "https://github.com/jquery/jquery-color",
+    "download": "http://code.jquery.com/#color",
+    "dependencies": {
+        "jquery": ">=1.7"
+    }
+}
