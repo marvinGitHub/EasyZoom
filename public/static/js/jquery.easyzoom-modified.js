@@ -213,7 +213,7 @@
 							((event.pageY - this.settings.image.lowResolution.offset().top) * this.settings.image.properties.relation.height) 
 							- ($(this.settings.selector.window).height() / 2);
 
-						this.adjustHighResolutionImage(-positionLeft, -positionTop).showPreview(this.getPropertiesOfPreview(event));		
+						this.adjustHighResolutionImage(-positionLeft, -positionTop).showZoomWindow().showPreview(this.getPropertiesOfPreview(event));		
 					}
 					else{
 						this.fadeOut();
@@ -255,9 +255,12 @@
 			},
 			/**
 			 * Show the zoom window with the magnified image inside it
-			 */
+			 * 
+			 * @returns {Plugin}
+			 */			
 			showZoomWindow: function() {
 				$(this.settings.selector.window).html(this.settings.resource.image).fadeIn();
+				return this;
 			},
 			/**
 			 * Start this jQuery plugin instance
