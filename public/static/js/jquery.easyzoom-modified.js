@@ -9,12 +9,12 @@
  */
 (function($) {	  
 	
-	function EasyZoom(target, settings){
+	$.easyZoom = function(target, settings) {
 		
 		/**
 		 * Wrapping the instance of this plugin
 		 */
-		var $this = this;
+		var plugin = this;
 
 		/**
 		 * Define default settings
@@ -29,7 +29,7 @@
 		/**
 		 * Define notifications
 		 */
-		this.notifications = {
+		plugin.notifications = {
 				loading: "Loading high resolution image...",
 				error: "There has been a problem with loading the image!"
 		};
@@ -37,7 +37,7 @@
 		/**
 		 * Extend the default settings
 		 */
-		this.settings = $.extend(defaultSettings, settings);
+		plugin.settings = $.extend(defaultSettings, settings);
 		
 		/**
 		 * Define global attributes
@@ -66,39 +66,39 @@
 		 */
 		this.init = function(referenceOfImage) {			
 			global.resource.reference = (typeof referenceOfImage != "undefined") ? referenceOfImage : $(target).attr("data-image");
-			$this.reset().attachEventListener();
+			plugin.reset().attachEventListener();
 		};
 		
 		/**
 		 * Attach serveral eventlistener to the given target
 		 * 
-		 * @returns EasyZoom 
+		 * @returns easyZoom 
 		 */
 		this.attachEventListener = function() {			
 			$(target).on({
 				mouseover: function() {
-					$this.start();					
+					plugin.start();					
 				},
 				mousemove: function(event) {
-					$this.recognizeMouseMovement(event);					
+					plugin.recognizeMouseMovement(event);					
 				},
 				mouseout: function(event) {					
-					if(!$this.previewRemainsInScope(event)){
-						$this.fadeOut();						
+					if(!plugin.previewRemainsInScope(event)){
+						plugin.fadeOut();						
 					}					
 				}
 			});					
-			return $this;
+			return plugin;
 		};
 		
 		/**
 		 * Detach serveral event listener otherwise events will be called multiple times
 		 * 
-		 * @returns EasyZoom
+		 * @returns easyZoom
 		 */
 		this.detachEventListener = function() {
 			$(target).off();
-			return $this;
+			return plugin;
 		};
 		
 		/**
@@ -108,40 +108,40 @@
 		 */
 		this.start = function() {	
 			
-			$this.modifyCursorAppearance("auto");
+			plugin.modifyCursorAppearance("auto");
 			
 			if(!global.resource.isLoaded){
-				$this.modifyCursorAppearance("progress");
-				$this.showNotification($this.notifications.loading);				
-				$this.waitUntilResourceIsLoaded(global.resource.reference);				
+				plugin.modifyCursorAppearance("progress");
+				plugin.showNotification(plugin.notifications.loading);				
+				plugin.waitUntilResourceIsLoaded(global.resource.reference);				
 			}	
 			else{
 				/**
 				 * Show initial zoom window
 				 */
-				$this.showZoomWindow();
+				plugin.showZoomWindow();
 			}
 		};
 		
 		/**
 		 * Reset the jQuery plugin
 		 * 
-		 * @returns EasyZoom
+		 * @returns easyZoom
 		 */
 		this.reset = function() {		
 			global.resource.isLoaded = false;			
-			return $this.fadeOut().detachEventListener();
+			return plugin.fadeOut().detachEventListener();
 		};
 		
 		/**
 		 * Fadeout various elements which have been made visible before
 		 * 
-		 * @returns EasyZoom
+		 * @returns easyZoom
 		 */
 		this.fadeOut = function() {
-			$($this.settings.selector.window).fadeOut();	
-			$($this.settings.selector.preview).fadeOut();
-			return $this;
+			$(plugin.settings.selector.window).fadeOut();	
+			$(plugin.settings.selector.preview).fadeOut();
+			return plugin;
 		};
 		
 		/**
@@ -152,7 +152,7 @@
 		 */
 		this.deferredFadeOut = function(time) {
 			setTimeout(function() {
-				$this.fadeOut();
+				plugin.fadeOut();
 			}, time);			
 		};
 		
@@ -167,19 +167,19 @@
 			
 			$(global.resource.image).load(function() {
 				global.resource.isLoaded = true;				
-				$this.calculateRelationOfImageGeometry(this);
+				plugin.calculateRelationOfImageGeometry(this);
 
 				/**
 				 * Restart jQuery plugin
 				 */
-				$this.start();				
+				plugin.start();				
 				}
 			).error(function() {
-				$this.showErrorNotification();
+				plugin.showErrorNotification();
 				}
 			);		
 			
-			return $this;
+			return plugin;
 		};
 		
 		/**
@@ -188,7 +188,7 @@
 		 * @returns void 
 		 */
 		this.showZoomWindow = function() {
-            $($this.settings.selector.window).html(global.resource.image).fadeIn();	            
+            $(plugin.settings.selector.window).html(global.resource.image).fadeIn();	            
 		};
 		
 		/**
@@ -197,7 +197,7 @@
 		 * @returns void
 		 */
 		this.showPreview = function(positionProperties) {				
-			$($this.settings.selector.preview).css(positionProperties).fadeIn();				
+			$(plugin.settings.selector.preview).css(positionProperties).fadeIn();				
 		};
 		
 		/**
@@ -223,23 +223,23 @@
 		this.recognizeMouseMovement = function(event) {
 			
 			if(global.resource.isLoaded){
-				if($this.previewRemainsInScope(event)){
+				if(plugin.previewRemainsInScope(event)){
 					
 					var positionLeft = 
 						((event.pageX - global.image.lowResolution.offset().left) * global.image.properties.relation.width) - 
-						($($this.settings.selector.window).width() / 2);
+						($(plugin.settings.selector.window).width() / 2);
 					
 					var positionTop = 
 						((event.pageY - global.image.lowResolution.offset().top) * global.image.properties.relation.height) - 
-						($($this.settings.selector.window).height() / 2);
+						($(plugin.settings.selector.window).height() / 2);
 						
-					$($this.settings.selector.window).children("img:first").css({left: -positionLeft, top: -positionTop});	
+					$(plugin.settings.selector.window).children("img:first").css({left: -positionLeft, top: -positionTop});	
 	
-					$this.showPreview($this.getPositionPropertiesPreview(event));
-					$this.showZoomWindow();					
+					plugin.showPreview(plugin.getPositionPropertiesPreview(event));
+					plugin.showZoomWindow();					
 				}
 				else{
-					$this.fadeOut();
+					plugin.fadeOut();
 				}					
 			}			
 		};
@@ -253,8 +253,8 @@
 		this.getPositionPropertiesPreview = function(event) {
 			
 			var positionProperties = {
-					height: $($this.settings.selector.window).height() / global.image.properties.relation.height,
-					width: ($($this.settings.selector.window).width() / global.image.properties.relation.width)									
+					height: $(plugin.settings.selector.window).height() / global.image.properties.relation.height,
+					width: ($(plugin.settings.selector.window).width() / global.image.properties.relation.width)									
 			};
 			
 			var offsetParent = $(global.image.lowResolution).offsetParent().offset();
@@ -294,11 +294,11 @@
 		/**
 		 * Shows the given notification in the zoom window
 		 * 
-		 * @returns EasyZoom
+		 * @returns easyZoom
 		 */
 		this.showNotification = function(notification) {
-			$($this.settings.selector.window).fadeIn().text(notification);
-			return $this;
+			$(plugin.settings.selector.window).fadeIn().text(notification);
+			return plugin;
 		};
 		
 		/**
@@ -308,18 +308,18 @@
 		 * @returns void
 		 */
 		this.showErrorNotification = function() {			
-			$this.modifyCursorAppearance("auto").showNotification($this.notifications.error).deferredFadeOut(2000);	
+			plugin.modifyCursorAppearance("auto").showNotification(plugin.notifications.error).deferredFadeOut(2000);	
 		};
 		
 		/**
 		 * Modify the cursor appearance when a hover event of the target will be
 		 * triggered
 		 * 
-		 * @returns EasyZoom
+		 * @returns easyZoom
 		 */
 		this.modifyCursorAppearance = function(appearance) {
 			$(target).css("cursor", appearance);
-			return $this;
+			return plugin;
 		};
 		
 		/**
@@ -327,7 +327,7 @@
 		 * 
 		 * @returns void
 		 */
-		$this.init();
+		plugin.init();		
 	};
 
 	/**
@@ -336,7 +336,7 @@
 	$.fn.easyZoom = function(settings) {
 		
 		return this.each(function(){
-			$.data(this, "easyZoom", new EasyZoom(this, settings));
+			$.data(this, "easyZoom", new $.easyZoom(this, settings));
 		});		
 	};
 
