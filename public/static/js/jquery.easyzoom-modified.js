@@ -121,7 +121,8 @@
 			 * @param timeInMilliseconds
 			 */
 			deferredFadeOut: function(timeInMilliseconds) {
-				setTimeout(function() {this.fadeOut();}, timeInMilliseconds);
+				var plugin = this;
+				setTimeout(function() {plugin.fadeOut();}, timeInMilliseconds);
 			},
 			/**
 			 * Detach serveral event listener otherwise events will be called multiple times
