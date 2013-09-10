@@ -5,339 +5,315 @@
  * @author Matt Hinchliffe
  * @author Marvin Elia Hoppe
  * @license Creative Commons Attribution-ShareAlike 3.0
- * @version 1.0.6
+ * @version 1.0.7
  */
-(function($) {	  
+;(function ($) {
+
+	/**
+	 * Define plugin name
+	 */
+	var pluginName = "easyZoom";
 	
-	$.easyZoom = function(target, settings) {
-		
-		/**
-		 * Wrapping the instance of this plugin
-		 */
-		var plugin = this;
-
-		/**
-		 * Define default settings
-		 */
-		var defaultSettings = {
-				selector: {
-					preview: "#preview-zoom",
-					window: "#window-zoom"					
-				}
-		};
-		
-		/**
-		 * Define notifications
-		 */
-		plugin.notifications = {
-				loading: "Loading high resolution image...",
-				error: "There has been a problem with loading the image!"
-		};
-		
-		/**
-		 * Extend the default settings
-		 */
-		plugin.settings = $.extend(defaultSettings, settings);
-		
-		/**
-		 * Define global attributes
-		 */
-		var global = {				
-				image: {
-					lowResolution: $("img:first", target),
-					properties: {
-						relation: {
-							height: null,
-							width: null							
-						}						
-					}					
-				},
-				resource: {
-					image: new Image(),
-					isLoaded: false,					
-					reference: null					
-				}				
-		};
-
-		/**
-		 * Initialize the jQuery plugin
-		 * 
-		 * @returns void
-		 */
-		this.init = function(referenceOfImage) {			
-			global.resource.reference = (typeof referenceOfImage != "undefined") ? referenceOfImage : $(target).attr("data-image");
-			plugin.reset().attachEventListener();
-		};
-		
-		/**
-		 * Attach serveral eventlistener to the given target
-		 * 
-		 * @returns easyZoom 
-		 */
-		this.attachEventListener = function() {			
-			$(target).on({
-				mouseover: function() {
-					plugin.start();					
-				},
-				mousemove: function(event) {
-					plugin.recognizeMouseMovement(event);					
-				},
-				mouseout: function(event) {					
-					if(!plugin.previewRemainsInScope(event)){
-						plugin.fadeOut();						
-					}					
-				}
-			});					
-			return plugin;
-		};
-		
-		/**
-		 * Detach serveral event listener otherwise events will be called multiple times
-		 * 
-		 * @returns easyZoom
-		 */
-		this.detachEventListener = function() {
-			$(target).off();
-			return plugin;
-		};
-		
-		/**
-		 * Start the jQuery plugin
-		 * 
-		 * @returns void
-		 */
-		this.start = function() {	
-			
-			plugin.modifyCursorAppearance("auto");
-			
-			if(!global.resource.isLoaded){
-				plugin.modifyCursorAppearance("progress");
-				plugin.showNotification(plugin.notifications.loading);				
-				plugin.waitUntilResourceIsLoaded(global.resource.reference);				
-			}	
-			else{
-				/**
-				 * Show initial zoom window
-				 */
-				plugin.showZoomWindow();
-			}
-		};
-		
-		/**
-		 * Reset the jQuery plugin
-		 * 
-		 * @returns easyZoom
-		 */
-		this.reset = function() {		
-			global.resource.isLoaded = false;			
-			return plugin.fadeOut().detachEventListener();
-		};
-		
-		/**
-		 * Fadeout various elements which have been made visible before
-		 * 
-		 * @returns easyZoom
-		 */
-		this.fadeOut = function() {
-			$(plugin.settings.selector.window).fadeOut();	
-			$(plugin.settings.selector.preview).fadeOut();
-			return plugin;
-		};
-		
-		/**
-		 * Defer fadeout by the given time in milliseconds
-		 * 
-		 * @param integer time
-		 * @returns void
-		 */
-		this.deferredFadeOut = function(time) {
-			setTimeout(function() {
-				plugin.fadeOut();
-			}, time);			
-		};
-		
-		/**
-		 * Wait until the resource is loaded
-		 * 
-		 * @returns Global
-		 */
-		this.waitUntilResourceIsLoaded = function(reference) {
-		
-			global.resource.image.src = reference;
-			
-			$(global.resource.image).load(function() {
-				global.resource.isLoaded = true;				
-				plugin.calculateRelationOfImageGeometry(this);
-
-				/**
-				 * Restart jQuery plugin
-				 */
-				plugin.start();				
-				}
-			).error(function() {
-				plugin.showErrorNotification();
-				}
-			);		
-			
-			return plugin;
-		};
-		
-		/**
-		 * Show the zoom window
-		 * 
-		 * @returns void 
-		 */
-		this.showZoomWindow = function() {
-            $(plugin.settings.selector.window).html(global.resource.image).fadeIn();	            
-		};
-		
-		/**
-		 * Show the preview of the magnified area
-		 * 
-		 * @returns void
-		 */
-		this.showPreview = function(positionProperties) {				
-			$(plugin.settings.selector.preview).css(positionProperties).fadeIn();				
-		};
-		
-		/**
-		 * Calculate relations of image geometry
-		 * 
-		 * @returns void
-		 */
-		this.calculateRelationOfImageGeometry = function(imageHighResolution) {						
-
-			global.image.properties.relation.width =
-				imageHighResolution.width / global.image.lowResolution.width();
-			
-			global.image.properties.relation.height =
-				imageHighResolution.height / global.image.lowResolution.height();		
-		};
-		
-		/**
-		 * Recognize mouse movement, animate image inside the zoom window
-		 * 
-		 * @param object event
-		 * @returns void
-		 */
-		this.recognizeMouseMovement = function(event) {
-			
-			if(global.resource.isLoaded){
-				if(plugin.previewRemainsInScope(event)){
-					
-					var positionLeft = 
-						((event.pageX - global.image.lowResolution.offset().left) * global.image.properties.relation.width) - 
-						($(plugin.settings.selector.window).width() / 2);
-					
-					var positionTop = 
-						((event.pageY - global.image.lowResolution.offset().top) * global.image.properties.relation.height) - 
-						($(plugin.settings.selector.window).height() / 2);
-						
-					$(plugin.settings.selector.window).children("img:first").css({left: -positionLeft, top: -positionTop});	
-	
-					plugin.showPreview(plugin.getPositionPropertiesPreview(event));
-					plugin.showZoomWindow();					
-				}
-				else{
-					plugin.fadeOut();
+	/**
+	 * Define default properties
+	 */
+	var defaults = {
+			image: {
+				lowResolution: null,
+				properties: {
+					relation: {
+						height: null,
+						width: null							
+					}						
 				}					
+			},
+			notifications: {
+				error: "There has been a problem with loading the image!",
+				loading: "Loading high resolution image..."					
+			},			
+			resource: {
+				image: new Image(),
+				isLoaded: false,					
+				reference: null					
+			},
+			selector: {
+				preview: "#preview-zoom",
+				window: "#window-zoom"
 			}			
-		};
-		
-		/**
-		 * Retrieve a list of position properties used to adjust the preview
-		 * 
-		 * @param object event
-		 * @returns multitype:integer
-		 */
-		this.getPositionPropertiesPreview = function(event) {
-			
-			var positionProperties = {
-					height: $(plugin.settings.selector.window).height() / global.image.properties.relation.height,
-					width: ($(plugin.settings.selector.window).width() / global.image.properties.relation.width)									
-			};
-			
-			var offsetParent = $(global.image.lowResolution).offsetParent().offset();
-		
-			return $.extend(positionProperties, {
-				left: event.pageX - (positionProperties.width / 2) - offsetParent.left,
-				top: event.pageY - (positionProperties.height / 2) - offsetParent.top
-				});
-		};	
-		
-		/**
-		 * Review wether the preview remains in a valid scope
-		 * 
-		 * @param object event
-		 * @returns boolean
-		 */
-		this.previewRemainsInScope = function(event) {
-			
-			var area = $(global.image.lowResolution);
-			
-			if(event.pageX < area.offset().left){
-				return false;
-			}
-			if(event.pageX > area.offset().left + area.width()){
-				return false;				
-			}
-			if(event.pageY < area.offset().top){
-				return false;
-			}
-			if(event.pageY > area.offset().top + area.height()){
-				return false;				
-			}
-			
-			return true;
-		};
+	};
 
+	/**
+	 * Plugin constructor
+	 */
+	function Plugin(element, options) {		
 		/**
-		 * Shows the given notification in the zoom window
-		 * 
-		 * @returns easyZoom
+		 * Select low resolution image
 		 */
-		this.showNotification = function(notification) {
-			$(plugin.settings.selector.window).fadeIn().text(notification);
-			return plugin;
-		};
+		defaults.image.lowResolution = $("img:first", element);
 		
-		/**
-		 * Shows an error notification, after two seconds the zoom window
-		 * will be hidden
-		 * 
-		 * @returns void
-		 */
-		this.showErrorNotification = function() {			
-			plugin.modifyCursorAppearance("auto").showNotification(plugin.notifications.error).deferredFadeOut(2000);	
-		};
-		
-		/**
-		 * Modify the cursor appearance when a hover event of the target will be
-		 * triggered
-		 * 
-		 * @returns easyZoom
-		 */
-		this.modifyCursorAppearance = function(appearance) {
-			$(target).css("cursor", appearance);
-			return plugin;
-		};
-		
-		/**
-		 * Initialize the jQuery plugin at startup
-		 * 
-		 * @returns void
-		 */
-		plugin.init();		
+		this.element = element;
+		this.settings = $.extend(defaults, options);
+		this._defaults = defaults;
+		this._name = pluginName;
+		this.init();
+	};
+
+	/**
+	 * Plugin prototype
+	 */
+	Plugin.prototype = {
+			/**
+			 * Initialize the plugin
+			 */
+			init: function (referenceOfImage) {				
+				this.settings.resource.reference = (typeof referenceOfImage != "undefined") ? referenceOfImage : $(this.element).attr("data-image");
+				this.reset().attachEventListener();
+			},
+			/**
+			 * Adjust the high resolution image inside the zoom window
+			 * 
+			 * @param positionLeft
+			 * @param positionTop
+			 * @returns {Plugin}
+			 */
+			adjustHighResolutionImage: function(positionLeft, positionTop) {
+				$(this.settings.selector.window).children("img:first").css({left: positionLeft, top: positionTop});
+				return this;				
+			},
+			/**
+			 * Attach serveral eventlistener to the given element
+			 * 
+			 * @returns {Plugin}
+			 */
+			attachEventListener: function() {
+				var plugin = this;
+				
+				$(this.element).on({
+					mouseover: function() {
+						plugin.start();
+					},
+					mousemove: function(event) {
+						plugin.recognizeMouseMovement(event);
+					},
+					mouseout: function(event) {
+						if(!plugin.previewRemainsInScope(event)){
+							plugin.fadeOut();
+						}
+					}
+				});
+				return this;		
+			},
+			/**
+			 * Calculate the relation of the geometry between the given images
+			 * 
+			 * @param imageHighResolution
+			 */
+			calculateRelationOfImageGeometry: function(imageHighResolution) {				
+				this.settings.image.properties.relation.width =
+					imageHighResolution.width / this.settings.image.lowResolution.width();
+				
+				this.settings.image.properties.relation.height =
+					imageHighResolution.height / this.settings.image.lowResolution.height();				
+			},
+			/**
+			 * Defer fadeout by the given time in milliseconds
+			 * 
+			 * @param timeInMilliseconds
+			 */
+			deferredFadeOut: function(timeInMilliseconds) {
+				setTimeout(function() {this.fadeOut();}, timeInMilliseconds);
+			},
+			/**
+			 * Detach serveral event listener otherwise events will be called multiple times
+			 * 
+			 * @returns {Plugin}
+			 */
+			detachEventListener: function() {
+				$(this.element).off();
+				return this;
+			},
+			/**
+			 * Fadeout various elements which have been made visible before
+			 * 
+			 * @returns {Plugin}
+			 */
+			fadeOut: function() {
+				$(this.settings.selector.preview).fadeOut();
+				$(this.settings.selector.window).fadeOut();
+				return this;
+			},
+			/**
+			 * Retrieve a list of position properties used to adjust the preview
+			 * 
+			 * @param event
+			 * @returns {multitype:integer}
+			 */
+			getPropertiesOfPreview: function(event) {
+				
+				var properties = {
+						height: $(this.settings.selector.window).height() / this.settings.image.properties.relation.height,
+						width: $(this.settings.selector.window).width() / this.settings.image.properties.relation.width
+				};
+				
+				var offsetOfParentElement = $(this.settings.image.lowResolution).offsetParent().offset();
+				
+				return $.extend(properties, {
+					left: event.pageX - (properties.width / 2) - offsetOfParentElement.left,	
+					top: event.pageY - (properties.height / 2) - offsetOfParentElement.top
+				});			
+			},			
+			/**
+			 * Modify the cursor appearance when a hover event of the element will be triggered
+			 * 
+			 * @param appearance
+			 * @returns {Plugin}
+			 */
+			modifyCursorAppearance: function(appearance) {
+				$(this.element).css("cursor", appearance);
+				return this;		
+			},
+			/**
+			 * Review wether the preview remains in the scope of the given element
+			 * 
+			 * @param event
+			 * @returns {Boolean}
+			 */
+			previewRemainsInScope: function(event) {				
+				var basis = $(this.settings.image.lowResolution);
+				
+				if(event.pageX < basis.offset().left){
+					return false;
+				}
+				if(event.pageX > basis.offset().left + basis.width()){
+					return false;				
+				}
+				if(event.pageY < basis.offset().top){
+					return false;
+				}
+				if(event.pageY > basis.offset().top + basis.height()){
+					return false;				
+				}				
+				return true;				
+			},
+			/**
+			 * Recognize mouse movement, update relating elements
+			 * 
+			 * @param event
+			 */
+			recognizeMouseMovement: function(event) {
+				if(this.settings.resource.isLoaded){
+					if(this.previewRemainsInScope(event)){	
+						
+						var positionLeft = 
+							((event.pageX - this.settings.image.lowResolution.offset().left) * this.settings.image.properties.relation.width) 
+							- ($(this.settings.selector.window).width() / 2);
+						
+						var positionTop = 
+							((event.pageY - this.settings.image.lowResolution.offset().top) * this.settings.image.properties.relation.height) 
+							- ($(this.settings.selector.window).height() / 2);
+
+						this.adjustHighResolutionImage(-positionLeft, -positionTop).showPreview(this.getPropertiesOfPreview(event));		
+					}
+					else{
+						this.fadeOut();
+					}					
+				}	
+			},
+			/**
+			 * Reset this jQuery plugin instance
+			 * 
+			 * @returns {Plugin}
+			 */
+			reset: function() {
+				this.settings.resource.isLoaded = false;			
+				return this.fadeOut().detachEventListener();
+			},
+			/**
+			 * Shows an error notification, after a shot time the zoom window will be hidden
+			 */
+			showErrorNotification: function() {
+				this.modifyCursorAppearance("auto").showNotification(this.settings.notifications.error).deferredFadeOut(2000);
+			},
+			/**
+			 * Shows the given notification inside the zoom window
+			 * 
+			 * @param notification
+			 * @returns {Plugin}
+			 */
+			showNotification: function(notification) {
+				$(this.settings.selector.window).fadeIn().text(notification);
+				return this;
+			},
+			/**
+			 * Show the preview of the magnified area
+			 * 
+			 * @param properties
+			 */
+			showPreview: function(properties) {
+				$(this.settings.selector.preview).css(properties).fadeIn();
+			},
+			/**
+			 * Show the zoom window with the magnified image inside it
+			 */
+			showZoomWindow: function() {
+				$(this.settings.selector.window).html(this.settings.resource.image).fadeIn();
+			},
+			/**
+			 * Start this jQuery plugin instance
+			 */
+			start: function() {
+				this.modifyCursorAppearance("auto");
+				
+				if(!this.settings.resource.isLoaded){
+					this.modifyCursorAppearance("progress");
+					this.showNotification(this.settings.notifications.loading);				
+					this.waitUntilResourceIsLoaded(this.settings.resource.reference);				
+				}	
+				else{
+					/**
+					 * Show initial zoom window
+					 */
+					this.showZoomWindow();
+				}
+			},
+			/**
+			 * Wait until the resource is loaded
+			 * 
+			 * @param reference
+			 * @returns {Plugin}
+			 */
+			waitUntilResourceIsLoaded: function(reference) {
+				/**
+				 * Local plugin wrapping otherwise "this" will reference the loaded image
+				 */
+				var plugin = this;
+				
+				this.settings.resource.image.src = reference;
+				
+				$(this.settings.resource.image).load(function() {
+					plugin.settings.resource.isLoaded = true;				
+					plugin.calculateRelationOfImageGeometry(this);
+
+					/**
+					 * Restart this jQuery plugin instance
+					 */
+					plugin.start();				
+					}
+				).error(function() {
+					plugin.showErrorNotification();
+					}
+				);					
+				return plugin;
+			}
 	};
 
 	/**
 	 * jQuery plugin wrapper
 	 */
-	$.fn.easyZoom = function(settings) {
-		
-		return this.each(function(){
-			$.data(this, "easyZoom", new $.easyZoom(this, settings));
-		});		
+	$.fn[pluginName] = function(options) {		
+		return this.each(function() {
+			$.data(this, pluginName, new Plugin(this, options));			
+		});
 	};
 
 })(jQuery);
