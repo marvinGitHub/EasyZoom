@@ -18,6 +18,10 @@
 	 * Define default properties
 	 */
 	var defaults = {
+			interval: {
+				notification: 1500,
+				animation: 300
+			},
 			image: {
 				lowResolution: null,
 				properties: {
@@ -27,7 +31,7 @@
 					}						
 				}					
 			},
-			notifications: {
+			notifications: {				
 				error: "There has been a problem with loading the image!",
 				loading: "Loading high resolution image..."					
 			},			
@@ -39,7 +43,7 @@
 			selector: {
 				preview: "#preview-zoom",
 				window: "#window-zoom"
-			}			
+			}
 	};
 
 	/**
@@ -88,17 +92,17 @@
 			attachEventListener: function() {
 				var plugin = this;
 				
-				$(this.element).on({
+				$(plugin.element).on({
+					mousemove: function(event) {
+						plugin.recognizeMouseMovement(event);						
+					},
 					mouseover: function() {
 						plugin.start();
-					},
-					mousemove: function(event) {
-						plugin.recognizeMouseMovement(event);
 					},
 					mouseout: function(event) {
 						if(!plugin.previewRemainsInScope(event)){
 							plugin.fadeOut();
-						}
+						}						
 					}
 				});
 				return this;		
@@ -139,8 +143,8 @@
 			 * @returns {Plugin}
 			 */
 			fadeOut: function() {
-				$(this.settings.selector.preview).fadeOut();
-				$(this.settings.selector.window).fadeOut();
+				$(this.settings.selector.preview).fadeOut(this.settings.interval.animation);
+				$(this.settings.selector.window).fadeOut(this.settings.interval.animation);
 				return this;
 			},
 			/**
@@ -233,7 +237,7 @@
 			 * Shows an error notification, after a shot time the zoom window will be hidden
 			 */
 			showErrorNotification: function() {
-				this.modifyCursorAppearance("auto").showNotification(this.settings.notifications.error).deferredFadeOut(2000);
+				this.modifyCursorAppearance("auto").showNotification(this.settings.notifications.error).deferredFadeOut(this.settings.interval.notification);
 			},
 			/**
 			 * Shows the given notification inside the zoom window
@@ -242,7 +246,7 @@
 			 * @returns {Plugin}
 			 */
 			showNotification: function(notification) {
-				$(this.settings.selector.window).fadeIn().text(notification);
+				$(this.settings.selector.window).text(notification).fadeIn(this.settings.interval.animation);
 				return this;
 			},
 			/**
@@ -251,7 +255,7 @@
 			 * @param properties
 			 */
 			showPreview: function(properties) {
-				$(this.settings.selector.preview).css(properties).fadeIn();
+				$(this.settings.selector.preview).css(properties).fadeIn(this.settings.interval.animation);
 			},
 			/**
 			 * Show the zoom window with the magnified image inside it
@@ -259,7 +263,7 @@
 			 * @returns {Plugin}
 			 */			
 			showZoomWindow: function() {
-				$(this.settings.selector.window).html(this.settings.resource.image).fadeIn();
+				$(this.settings.selector.window).html(this.settings.resource.image).fadeIn(this.settings.interval.animation);
 				return this;
 			},
 			/**
