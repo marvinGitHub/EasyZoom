@@ -81,6 +81,11 @@
 				},
 				mousemove: function(event) {
 					$this.recognizeMouseMovement(event);					
+				},
+				mouseout: function(event) {					
+					if(!$this.previewRemainsInScope(event)){
+						$this.fadeOut();						
+					}					
 				}
 			});					
 			return $this;
